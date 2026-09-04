@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fishImage } from '../data/fishImages.js';
+import { FISH_CATEGORIES, fishImage } from '../data/fishImages.js';
 import { PIN_PATTERN, readPin } from '../utils/pin.js';
 
-const FISH = ['Balaya (Skipjack)', 'Kelawalla (Yellowfin)', 'Hurulla', 'Thalapath (Seer)',
-  'Isso (Prawns)', 'Paraw (Trevally)', 'Koduwa (Barramundi)'];
 const MARKETS = ['Negombo Main', 'Duwa Landing', 'Pitipana'];
 
 export default function AddPrice({ onAdd }) {
@@ -79,7 +77,7 @@ export default function AddPrice({ onAdd }) {
             onChange={event => handleChange('fish', event.target.value)}
           >
             <option value="">-- Select --</option>
-            {FISH.map(fish => <option key={fish} value={fish}>{fish}</option>)}
+            {FISH_CATEGORIES.map(fish => <option key={fish} value={fish}>{fish}</option>)}
           </select>
           {errors.fish && <p className="error" id="fish-error">{errors.fish}</p>}
 
@@ -161,12 +159,16 @@ export default function AddPrice({ onAdd }) {
             <h3>Your report</h3>
           </div>
           <div className="fish-photo" style={{ borderRadius: '8px', overflow: 'hidden' }}>
+          {form.fish ? (
             <img
               src={fishImage(form.fish)}
-              alt={form.fish || 'No fish selected yet'}
+              alt={form.fish}
               width="800"
               height="600"
             />
+          ) : (
+            <p className="muted">Select a fish type to attach its photo automatically.</p>
+          )}
             {form.price && (
               <p className="fish-price">
                 Rs. {form.price} <span>/kg</span>

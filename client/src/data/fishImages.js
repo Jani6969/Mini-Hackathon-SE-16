@@ -1,14 +1,28 @@
-// Maps a reported fish name to a photo in `client/public/fish/`.
-// To swap in a better photo, overwrite the file at the same path — no code change.
-// Files marked "placeholder" are generated stand-ins waiting for a real photo.
+// Shared category list keeps form options and automatic card images in sync.
+export const FISH_CATEGORIES = [
+  'Balaya (Skipjack)',
+  'Kelawalla (Yellowfin)',
+  'Hurulla',
+  'Thalapath (Seer)',
+  'Isso (Prawns)',
+  'Paraw (Trevally)',
+  'Koduwa (Barramundi)',
+  'Linna (Frigate Tuna)',
+  'Kumbalawa (Indian Mackerel)',
+  'Salaya (Sardine)'
+];
+
 const FISH_IMAGES = {
   'Balaya (Skipjack)': '/fish/balaya.jpg',
-  'Isso (Prawns)': '/fish/isso.jpg',
+  'Kelawalla (Yellowfin)': '/fish/kelawalla.jpg',
+  Hurulla: '/fish/hurulla.jpg',
   'Thalapath (Seer)': '/fish/thalapath.jpg',
+  'Isso (Prawns)': '/fish/isso.jpg',
   'Paraw (Trevally)': '/fish/paraw.jpg',
-  'Kelawalla (Yellowfin)': '/fish/kelawalla-v2.png',
-  Hurulla: '/fish/hurulla-v2.png',
-  'Koduwa (Barramundi)': '/fish/koduwa.jpg' // placeholder
+  'Koduwa (Barramundi)': '/fish/koduwa.jpg',
+  'Linna (Frigate Tuna)': '/fish/linna.jpg',
+  'Kumbalawa (Indian Mackerel)': '/fish/kumbalawa.jpg',
+  'Salaya (Sardine)': '/fish/salaya.jpg'
 };
 
 const FALLBACK_IMAGE = '/fish/default.jpg';

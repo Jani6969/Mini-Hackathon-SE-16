@@ -79,9 +79,11 @@ below it.
 ## Data requirements
 
 - Exactly **three landing sites**: `Negombo Main`, `Duwa Landing`, `Pitipana`.
-- **Seven fish types** in the dropdown, each with the Sinhala name and the English
-  name in brackets: Balaya (Skipjack), Kelawalla (Yellowfin), Hurulla,
-  Thalapath (Seer), Isso (Prawns), Paraw (Trevally), Koduwa (Barramundi).
+- **Ten fish types** in the dropdown, each with the Sinhala name and the English
+  name in brackets where needed: Balaya (Skipjack), Kelawalla (Yellowfin),
+  Hurulla, Thalapath (Seer), Isso (Prawns), Paraw (Trevally), Koduwa
+  (Barramundi), Linna (Frigate Tuna), Kumbalawa (Indian Mackerel), and Salaya
+  (Sardine).
 - **Eight seed records** spanning all three sites, including the same fish
   (Balaya) at two different sites — this is what makes the search-and-compare
   feature demonstrable.
