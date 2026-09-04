@@ -4,6 +4,18 @@
 
 Today's fish prices across Negombo landing sites, reported by the people who are there.
 
+## Description
+
+Negombo Fish Price Board is a community-reported web application for fishermen,
+buyers, and retail sellers to publish and compare daily fish prices across
+Negombo Main, Duwa Landing, and Pitipana. It provides ten fish categories with
+automatic category images, live search, landing-site filters, price summaries,
+and PIN-protected report editing in a responsive public interface.
+
+**Keywords:** Negombo fish prices, Sri Lanka fisheries, daily seafood prices,
+fishermen, fish market, landing sites, community price board, React, Vite,
+Node.js, Express, MongoDB Atlas, Railway, Vercel, SE3090, SLIIT hackathon.
+
 | | |
 |---|---|
 | **Live app** | [negombo-fish-price-board-sithmi.vercel.app](https://negombo-fish-price-board-sithmi.vercel.app) |
@@ -48,6 +60,7 @@ results, before agreeing a price.
 - Live average price for the current filtered set
 - Edit or delete your own report with the 4-digit Edit PIN you chose when reporting
 - Reports expire automatically 24 hours after they are created
+- Ten fish categories with automatic category-specific images
 - Responsive layout for desktop and mobile
 - 404 page for unknown routes
 
