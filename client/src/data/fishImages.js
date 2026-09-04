@@ -6,8 +6,8 @@ const FISH_IMAGES = {
   'Isso (Prawns)': '/fish/isso.jpg',
   'Thalapath (Seer)': '/fish/thalapath.jpg',
   'Paraw (Trevally)': '/fish/paraw.jpg',
-  'Kelawalla (Yellowfin)': '/fish/kelawalla.jpg', // placeholder
-  Hurulla: '/fish/hurulla.jpg', // placeholder
+  'Kelawalla (Yellowfin)': '/fish/kelawalla-v2.png',
+  Hurulla: '/fish/hurulla-v2.png',
   'Koduwa (Barramundi)': '/fish/koduwa.jpg' // placeholder
 };
 
