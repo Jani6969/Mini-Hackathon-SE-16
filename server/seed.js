@@ -1,8 +1,13 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
-import Price from './models/Price.js';
+import Price, { REPORT_LIFETIME_MS } from './models/Price.js';
 
 dotenv.config();
+
+// Demo-only Edit PIN. Every seeded record shares it so a marker can try Edit and
+// Delete during the demo. Real user submissions choose their own PIN.
+const SEED_EDIT_PIN = '1234';
 
 const data = [
   { fish: 'Balaya (Skipjack)', market: 'Negombo Main', price: 950, seller: 'Nimal', date: '2026-09-04' },
@@ -16,7 +21,15 @@ const data = [
 ];
 
 await mongoose.connect(process.env.MONGO_URI);
+
+// Make sure the TTL index exists even on a collection created before it was added.
+await Price.syncIndexes();
+
+const editPinHash = await bcrypt.hash(SEED_EDIT_PIN, 10);
+const expiresAt = new Date(Date.now() + REPORT_LIFETIME_MS);
+
 await Price.deleteMany({});
-await Price.insertMany(data);
-console.log('Seeded', data.length, 'records');
+await Price.insertMany(data.map(record => ({ ...record, editPinHash, expiresAt })));
+
+console.log('Seeded', data.length, 'records (demo Edit PIN: ' + SEED_EDIT_PIN + ')');
 await mongoose.disconnect();

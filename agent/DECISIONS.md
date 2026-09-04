@@ -346,3 +346,71 @@ The shipped pages are visually simpler than the mockups. Acceptable: the mockups
 are a design reference, not a deliverable.
 
 **Status:** Accepted
+
+---
+
+### 2026-09-04 — Per-report 4-digit Edit PIN instead of accounts
+
+**Decision:**
+Ownership of a price report is proved by a 4-digit Edit PIN the reporter chooses
+at submission time. The server stores only a bcryptjs hash of it (`select: false`
+on the field), and requires a matching PIN before `PUT` or `DELETE` will touch a
+record. There is no registration, login, JWT, session or recovery flow.
+
+**Reason:**
+Gate 5 in `CLAUDE.md` fixes this prototype as public read + public write, and
+authentication is explicitly out of scope. But an unprotected public board where
+anyone can edit or delete anyone's report is worse than one with no edit at all.
+A per-record PIN is the smallest mechanism that gives a reporter control over
+their own entry without introducing accounts, and it is explainable in one
+sentence at the viva.
+
+**Alternatives considered:**
+- Full auth (accounts, JWT) — rejected: explicitly out of scope, and a deployment
+  risk that earns no rubric marks.
+- Browser-local ownership (`localStorage` record ids) — rejected: it is not real
+  ownership, it breaks across devices and incognito, and the marker tests in
+  incognito.
+- No edit or delete at all — rejected: the assessment asks for the capability,
+  and a mistyped price otherwise sits on the board until it expires.
+
+**Risk:**
+A 4-digit PIN is guessable by brute force; there is no rate limiting. This is
+stated honestly rather than hidden — the data is non-sensitive community price
+reports, and every record self-destructs within 24 hours, which bounds the value
+of guessing one. Rate limiting is named as a limitation, not implemented.
+
+**Status:** Accepted
+
+---
+
+### 2026-09-04 — 24-hour expiry via a MongoDB TTL index, set once at creation
+
+**Decision:**
+`expiresAt` defaults to creation time + 24 hours and carries a TTL index
+(`expireAfterSeconds: 0`). MongoDB's background monitor deletes expired
+documents. An edit updates only `fish`, `market`, `price` and `seller`; it never
+rewrites `expiresAt`.
+
+**Reason:**
+A dockside price is only meaningful on the day it was reported, so stale records
+should disappear on their own rather than needing a cleanup job or a cron
+service. The TTL index moves that work into the database, which means no extra
+process to deploy on Railway and nothing to go wrong at 3am.
+
+Anchoring the expiry to creation rather than to the last edit is the point: if an
+edit reset the clock, a record could be kept alive indefinitely by editing it,
+and the 24-hour guarantee shown in the UI would be false.
+
+**Alternatives considered:**
+- A `setInterval` sweeper in the Express process — rejected: dies with the dyno,
+  duplicates work across instances, and is more code than an index.
+- Filtering old records out at query time and leaving them in the collection —
+  rejected: the documents would accumulate forever on a free M0 tier.
+
+**Risk:**
+TTL deletion is asynchronous — the monitor runs roughly once a minute, so a
+document can outlive its `expiresAt` by up to about a minute. Expected MongoDB
+behaviour; noted here because it is a likely viva question.
+
+**Status:** Accepted

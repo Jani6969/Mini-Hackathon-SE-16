@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fishImage } from '../data/fishImages.js';
+import { PIN_PATTERN, readPin } from '../utils/pin.js';
 
 const FISH = ['Balaya (Skipjack)', 'Kelawalla (Yellowfin)', 'Hurulla', 'Thalapath (Seer)',
   'Isso (Prawns)', 'Paraw (Trevally)', 'Koduwa (Barramundi)'];
@@ -9,6 +10,9 @@ const MARKETS = ['Negombo Main', 'Duwa Landing', 'Pitipana'];
 export default function AddPrice({ onAdd }) {
   const navigate = useNavigate();
   const [form, setForm] = useState({ fish: '', market: '', price: '', seller: '' });
+  // The PIN is kept apart from the rest of the form and cleared after submit, so
+  // it never lingers in shared state, storage or the preview panel.
+  const [editPin, setEditPin] = useState('');
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -25,6 +29,8 @@ export default function AddPrice({ onAdd }) {
     }
     if (!form.seller.trim()) nextErrors.seller = 'Please enter your name.';
     else if (form.seller.trim().length < 3) nextErrors.seller = 'Name must be at least 3 characters.';
+    if (!editPin) nextErrors.editPin = 'Please create a 4-digit Edit PIN.';
+    else if (!PIN_PATTERN.test(editPin)) nextErrors.editPin = 'Edit PIN must contain exactly 4 digits.';
     return nextErrors;
   };
 
@@ -41,7 +47,8 @@ export default function AddPrice({ onAdd }) {
     if (Object.keys(nextErrors).length > 0) return;
     try {
       setSaving(true);
-      await onAdd({ ...form, price: Number(form.price), seller: form.seller.trim() });
+      await onAdd({ ...form, price: Number(form.price), seller: form.seller.trim(), editPin });
+      setEditPin('');
       navigate('/prices');
     } catch (error) {
       setApiError(error.message || 'Could not save. Please try again.');
@@ -113,6 +120,32 @@ export default function AddPrice({ onAdd }) {
             onChange={event => handleChange('seller', event.target.value)}
           />
           {errors.seller && <p className="error" id="seller-error">{errors.seller}</p>}
+
+          <label htmlFor="edit-pin">Edit PIN</label>
+          <input
+            id="edit-pin"
+            type="password"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={4}
+            value={editPin}
+            placeholder="e.g. 4826"
+            aria-invalid={Boolean(errors.editPin)}
+            aria-describedby={errors.editPin ? 'pin-error' : 'pin-note'}
+            onChange={event => {
+              setEditPin(readPin(event));
+              setErrors(previous => ({ ...previous, editPin: undefined }));
+              setApiError('');
+            }}
+          />
+          {errors.editPin
+            ? <p className="error" id="pin-error">{errors.editPin}</p>
+            : (
+              <p className="field-note" id="pin-note">
+                Create a 4-digit PIN. You will need it to edit or delete this report. Reports
+                automatically expire after 24 hours.
+              </p>
+            )}
 
           {apiError && <p className="error">{apiError}</p>}
 

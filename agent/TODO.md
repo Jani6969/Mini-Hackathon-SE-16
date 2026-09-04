@@ -19,12 +19,15 @@
 below were never ticked during that build and are stale — treat git history, not
 the boxes, as the record of what exists.
 
-**This session (branch `claude/stitch-mcp-setup-ff4fb1`):** the client UI was
-rebuilt to the dark "dockside terminal" theme designed in Google Stitch. Backend,
-API, schema and data model are untouched.
+**This session (branch `claude/fish-price-pin-ownership-afba0e`):** per-report
+ownership shipped. Each report carries a user-chosen 4-digit Edit PIN, stored
+only as a bcryptjs hash, and required for `PUT` and `DELETE`. Reports now expire
+24 hours after creation through a MongoDB TTL index.
 
-**Next action:** decide whether the UI rebuild merges to `main` before
-submission, and replace the three placeholder fish photos.
+**Next action:** run `docs/TESTING.md` Suite J against a real `MONGO_URI` — the
+Edit and Delete **modals have not been exercised in a browser** (no local `.env`
+existed, so there was no database to point at). The API itself is covered by 50
+passing end-to-end assertions against a real mongod.
 
 ---
 
@@ -538,6 +541,13 @@ None.
 
 ## Next
 
+- [ ] **Run Suite J locally with a real database.** The API is verified; the
+      Edit/Delete modal flow is not. `docs/TESTING.md` J1–J8.
+- [ ] `server/package-lock.json` is now tracked (it was not before). Railway will
+      switch to `npm ci`; confirm the first deploy after this lands succeeds.
+- [ ] Decide whether to reseed. `npm run seed` still does `deleteMany({})` — that
+      is pre-existing behaviour and it was **not** run this session. Records
+      created before this feature stay readable but cannot be edited or deleted.
 - [ ] Replace the three placeholder fish photos — `client/public/fish/kelawalla.jpg`,
       `hurulla.jpg`, `koduwa.jpg` (and `default.jpg`). Overwrite the file at the
       same path; `client/src/data/fishImages.js` needs no change.
@@ -551,13 +561,40 @@ None.
 
 ## Done
 
+- **2026-09-04** — Per-report Edit PIN ownership + 24-hour TTL expiry. Verified:
+  50/50 end-to-end assertions against a real mongod (create/edit/delete, wrong
+  PIN 403, field-injection attempts, TTL index present, edit preserves expiry),
+  client production build passes, add-form PIN validation renders, Edit/Delete
+  disabled in fallback mode.
 - **2026-09-04** — Client UI rebuilt to the dark dockside-terminal theme
   (Home, Prices, Report, 404). Verified: production build passes, no console
   errors, validation renders, no horizontal scroll at 320px, focus rings intact.
 
 ## Last session
 
-**2026-09-04** — Added the Google Stitch MCP server to Claude Code (user scope),
+**2026-09-04** — Added per-report ownership and automatic expiry.
+
+`editPinHash` (bcryptjs, `select: false`) and `expiresAt` were added to the
+`Price` schema, with an explicit TTL index (`expireAfterSeconds: 0`) rather than
+the `expires: 0` shorthand. `POST` now requires a 4-digit `editPin`; new `PUT`
+and `DELETE` routes load the hash deliberately and compare server-side. `PUT`
+writes a whitelist of `fish, market, price, seller`, so a client cannot push out
+the expiry or replace the hash — verified with injection requests. Editing never
+resets `expiresAt`.
+
+Front end: PIN field on the report form, Edit/Delete on every card, one
+`PriceActionModal` serving both dialogs, expiry label on cards, success flash,
+and Edit/Delete disabled while fallback sample data is showing.
+
+Records predating the feature return a 403 that explains why, rather than a 500
+from comparing against an undefined hash. Seed records share the hash of `1234`,
+documented in the README.
+
+Caveat carried forward: the modals were never driven in a browser — the browser
+pane's synthetic clicks were landing on the wrong element, and there was no local
+`.env`. Suite J in `docs/TESTING.md` covers what still needs a human pass.
+
+**2026-09-04 (earlier)** — Added the Google Stitch MCP server to Claude Code (user scope),
 then rebuilt the client UI from the Stitch designs in project
 `Website Homepage Design`.
 

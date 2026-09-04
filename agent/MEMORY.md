@@ -213,3 +213,43 @@ scroll-then-screenshot does not. To capture a long page, set a tall viewport wit
 
 **Not recorded here:** the Stitch API key. It lives in `~/.claude.json` outside
 this repo and must never be committed or pasted into project files.
+
+---
+
+## 2026-09-04 — Edit PIN ownership + 24-hour TTL
+
+**Where the PIN lives.** `editPinHash` on the `Price` schema, `select: false`.
+That flag is the whole reason the hash never leaks: every ordinary query, and so
+every API response, omits it. The only place it is loaded is
+`Price.findById(id).select('+editPinHash')` inside `findVerifiedReport` in
+`server/routes/priceRoutes.js`.
+
+**bcryptjs, not bcrypt.** Pure JS, so Railway never has to compile a native
+addon during the build. `bcrypt` would work locally on macOS and then fail or
+slow the deploy.
+
+**TTL index is declared, not inferred.** `priceSchema.index({ expiresAt: 1 },
+{ expireAfterSeconds: 0 })` rather than the `expires: 0` shorthand on the field —
+`0` reads as falsy in the shorthand path, and the explicit call removes the
+doubt. `seed.js` calls `Price.syncIndexes()` so an existing collection created
+before this feature still gets the index.
+
+**PUT writes a whitelist, never `req.body`.** `EDITABLE_FIELDS` is
+`fish, market, price, seller`. This is what stops a client pushing `expiresAt`
+into 2030 or replacing `editPinHash`. Verified with an injection request in the
+end-to-end run.
+
+**Records with no hash.** Documents created before this feature have no
+`editPinHash`. `bcrypt.compare` against `undefined` would throw a 500, so the
+route checks for a missing hash first and returns a 403 that says the record
+predates Edit PINs. Worth keeping if the collection is ever restored from an old
+dump.
+
+**Local end-to-end testing without Atlas.** `npm install --no-save
+mongodb-memory-server` gives a real mongod to test against without touching the
+cloud database or adding a dependency to `package.json`. ESM resolves packages
+from the *test file's* own directory, so the script has to sit inside `server/`
+— running it from the scratchpad fails with `ERR_MODULE_NOT_FOUND`.
+
+**Seed PIN.** Seeded records all share the hash of `1234`, documented in the
+README. Real submissions never get a default PIN.

@@ -167,6 +167,143 @@ nicety. It is a viva question — keep the terminal output.
 
 ---
 
+---
+
+## Suite J — Edit PIN ownership and 24-hour expiry
+
+Every step here is server-verified: the UI check and the Atlas check must agree.
+Replace `<ID>` with a real `_id` from `GET /api/prices`.
+
+### J1 — Create with a PIN
+
+| # | Step | Expected |
+|---|---|---|
+| J1.1 | `/add`, submit with the PIN field empty | "Please create a 4-digit Edit PIN." |
+| J1.2 | PIN = `482` | "Edit PIN must contain exactly 4 digits." |
+| J1.3 | Type letters into the PIN field | Nothing is entered — digits only, max 4 |
+| J1.4 | PIN = `4826`, other fields valid | Saves, navigates to `/prices`, card at the top |
+| J1.5 | Atlas → Browse Collections → `prices` | New document present |
+| J1.6 | Inspect that document | `editPinHash` starts `$2`; **no** `editPin` field; raw `4826` appears nowhere |
+| J1.7 | `GET /api/prices` response | No `editPinHash` anywhere in the JSON |
+
+```bash
+# J1.2 server-side — the frontend is not the only guard
+curl -i -X POST http://localhost:5000/api/prices \
+  -H "Content-Type: application/json" \
+  -d '{"fish":"Balaya (Skipjack)","market":"Pitipana","price":950,"seller":"Nimal","editPin":"482"}'
+# expect: HTTP 400  "Edit PIN must contain exactly 4 digits."
+
+# J1.4 server-side
+curl -i -X POST http://localhost:5000/api/prices \
+  -H "Content-Type: application/json" \
+  -d '{"fish":"Balaya (Skipjack)","market":"Pitipana","price":950,"seller":"Nimal","editPin":"4826"}'
+# expect: HTTP 201, data contains expiresAt, and NO editPinHash
+```
+
+### J2 — Edit with the wrong PIN
+
+| # | Step | Expected |
+|---|---|---|
+| J2.1 | Card → **Edit**, change price, PIN = `9999` | Dialog stays open, "Incorrect edit PIN." |
+| J2.2 | Atlas | Price unchanged |
+
+```bash
+curl -i -X PUT http://localhost:5000/api/prices/<ID> \
+  -H "Content-Type: application/json" \
+  -d '{"price":980,"editPin":"9999"}'
+# expect: HTTP 403  "Incorrect edit PIN."
+```
+
+### J3 — Edit with the correct PIN
+
+| # | Step | Expected |
+|---|---|---|
+| J3.1 | Note the record's `expiresAt` in Atlas before editing | Write it down |
+| J3.2 | Card → **Edit**, price `950` → `980`, PIN = `4826` | Dialog closes, "Price report updated successfully." |
+| J3.3 | The card | Shows Rs. 980 — **no page reload** |
+| J3.4 | Average / search / filter | Recalculate on their own |
+| J3.5 | Atlas | `price` is `980` |
+| J3.6 | Atlas `expiresAt` | **Identical** to J3.1 — an edit never extends the life of a report |
+
+```bash
+curl -i -X PUT http://localhost:5000/api/prices/<ID> \
+  -H "Content-Type: application/json" \
+  -d '{"price":980,"editPin":"4826"}'
+# expect: HTTP 200, data.price = 980
+
+# The client cannot push the expiry out or replace the hash:
+curl -i -X PUT http://localhost:5000/api/prices/<ID> \
+  -H "Content-Type: application/json" \
+  -d '{"price":985,"editPin":"4826","expiresAt":"2030-01-01T00:00:00Z","editPinHash":"pwned"}'
+# expect: HTTP 200, price 985 — but expiresAt and editPinHash unchanged in Atlas
+```
+
+### J4 — Delete with the wrong PIN
+
+| # | Step | Expected |
+|---|---|---|
+| J4.1 | Card → **Delete**, PIN = `0001` | Dialog stays open, "Incorrect edit PIN." |
+| J4.2 | Atlas | Record still there |
+
+```bash
+curl -i -X DELETE http://localhost:5000/api/prices/<ID> \
+  -H "Content-Type: application/json" -d '{"editPin":"0001"}'
+# expect: HTTP 403
+```
+
+### J5 — Delete with the correct PIN
+
+| # | Step | Expected |
+|---|---|---|
+| J5.1 | Card → **Delete**, PIN = `4826` | Card disappears, "Price report deleted successfully." |
+| J5.2 | Average / entry count | Recalculate immediately |
+| J5.3 | Atlas | Document gone |
+| J5.4 | `DELETE` the same id again | **HTTP 404** "Price report not found." |
+
+```bash
+curl -i -X DELETE http://localhost:5000/api/prices/<ID> \
+  -H "Content-Type: application/json" -d '{"editPin":"4826"}'
+# expect: HTTP 200  "Price report deleted successfully."
+```
+
+### J6 — TTL
+
+Do **not** sit and wait 24 hours. Prove the mechanism instead.
+
+| # | Step | Expected |
+|---|---|---|
+| J6.1 | Atlas, compare a record's `createdAt` and `expiresAt` | Exactly 24 hours apart |
+| J6.2 | Atlas → Collections → `prices` → **Indexes** | An index on `expiresAt` with `expireAfterSeconds: 0` |
+| J6.3 | A card on `/prices` | Shows "Expires in 23h" (or `m` / "Expiring soon" as it runs down) |
+
+MongoDB's TTL monitor sweeps roughly once a minute, so an expired document is
+removed shortly **after** `expiresAt`, not at the exact second. That is expected
+behaviour, not a bug — it is a likely viva question.
+
+### J7 — Seed and legacy records
+
+| # | Step | Expected |
+|---|---|---|
+| J7.1 | `npm run seed` | `Seeded 8 records (demo Edit PIN: 1234)` |
+| J7.2 | Edit a seeded card with PIN `1234` | Succeeds |
+| J7.3 | Edit a seeded card with any other PIN | **403** "Incorrect edit PIN." |
+| J7.4 | A record created before this feature (no `editPinHash`) | Still visible on the board; Edit/Delete returns **403** saying it predates Edit PINs |
+
+The demo PIN `1234` is documented in the README and belongs to seed data only.
+Real submissions use the PIN their reporter typed.
+
+### J8 — Regression and fallback
+
+| # | Step | Expected |
+|---|---|---|
+| J8.1 | Search, landing-site filter, average, lowest, highest | All still work |
+| J8.2 | Add a new price | Still works |
+| J8.3 | Stop the API, reload | Fallback banner appears; Edit/Delete buttons are **disabled** with "Editing is unavailable while demo data is being shown." |
+| J8.4 | 375px width | Card buttons and both dialogs stack; no horizontal scrolling |
+| J8.5 | Deployed site in Incognito | Full create → edit → delete cycle works against Railway + Atlas |
+
+---
+
 ## Sign-off
 
 | Suite | Local (Phase 4) | Deployed (Phase 6) |
@@ -180,6 +317,7 @@ nicety. It is a viva question — keep the terminal output.
 | G — Build & integration | ☐ | n/a |
 | H — Deployed | n/a | ☐ |
 | I — Failure & recovery | ☐ | ☐ |
+| J — Edit PIN & expiry | ☐ | ☐ |
 
 A suite with an untested row is an untested suite. If something fails, fix it and
 **re-run the whole suite**, not only the failing row.

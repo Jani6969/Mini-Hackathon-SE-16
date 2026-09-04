@@ -46,6 +46,8 @@ results, before agreeing a price.
 - Browse all reported prices with live search by fish name
 - Filter by landing site
 - Live average price for the current filtered set
+- Edit or delete your own report with the 4-digit Edit PIN you chose when reporting
+- Reports expire automatically 24 hours after they are created
 - Responsive layout for desktop and mobile
 - 404 page for unknown routes
 
@@ -106,7 +108,7 @@ Detail: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 cd server
 npm install
 cp .env.example .env      # then set MONGO_URI
-npm run seed              # expect: Seeded 8 records
+npm run seed              # expect: Seeded 8 records (demo Edit PIN: 1234)
 npm run dev               # expect: MongoDB connected / API on 5000
 ```
 
@@ -136,9 +138,47 @@ falls back to labelled sample data.
 | `GET` | `/` | liveness probe |
 | `GET` | `/health` | API status + database connection state |
 | `GET` | `/api/prices` | all price records, newest first |
-| `POST` | `/api/prices` | create one price record |
+| `POST` | `/api/prices` | create one price record (body includes `editPin`) |
+| `PUT` | `/api/prices/:id` | update one record — requires the correct `editPin` |
+| `DELETE` | `/api/prices/:id` | delete one record — requires the correct `editPin` in the JSON body |
 
 All responses use the envelope `{ success, message, data }`.
+
+Status codes used by the PIN-protected routes:
+
+| Code | When |
+|---|---|
+| `400` | missing or malformed `editPin`, invalid record id, or invalid field data |
+| `403` | the PIN did not match the record |
+| `404` | no record with that id (it may already have expired) |
+| `500` | database or server failure |
+
+## Report Ownership & Expiry
+
+- Each report has a user-created 4-digit Edit PIN, chosen on the report form.
+- Only the bcrypt hash is stored. The raw PIN is never written to the database,
+  never logged, and never held in front-end state after the form is submitted.
+- The hash field uses Mongoose `select: false`, so it is excluded from every
+  query and therefore never appears in an API response.
+- The correct PIN is required for both Edit and Delete. The comparison happens
+  server-side; a wrong PIN returns `403` and the record is left untouched.
+- PINs cannot be recovered. There is deliberately no email or SMS recovery in
+  this prototype — a forgotten PIN means waiting for the report to expire.
+- Reports automatically expire 24 hours after creation. MongoDB's TTL monitor
+  performs the cleanup, so deletion happens shortly after the timestamp rather
+  than at the exact second.
+- Editing a report never resets its expiry: a report created at 10:00 and edited
+  at 16:00 still expires at 10:00 the next day.
+- Clients cannot overwrite `_id`, `editPinHash`, `createdAt` or `expiresAt`;
+  only `fish`, `market`, `price` and `seller` are writable through `PUT`.
+- **Seed records use Edit PIN `1234` for demonstration.** That PIN applies only
+  to records created by `npm run seed`; real submissions use whatever PIN the
+  reporter chose.
+- Records created before this feature existed have no PIN hash. They stay
+  readable on the board but cannot be edited or deleted, and the API says so
+  explicitly instead of returning a misleading "wrong PIN".
+- While the app is showing fallback sample data (API unreachable), Edit and
+  Delete are disabled, so the UI never pretends a change was persisted.
 
 ## Repository Guide
 
@@ -159,8 +199,13 @@ All responses use the envelope `{ success, message, data }`.
 Honest scope statement for a four-hour prototype:
 
 - No authentication — anyone can submit a price, and there is no moderation
+- A 4-digit Edit PIN protects one report; it is not an account. There is no rate
+  limiting, so a determined attacker could brute-force a PIN. Accepted for a
+  prototype holding non-sensitive community price reports that delete themselves
+  within 24 hours
+- A forgotten Edit PIN cannot be recovered — by design, not by omission
 - No automated test suite; testing is the documented manual matrix
-- No price history or trends over time
+- No price history or trends over time — reports expire after 24 hours
 - Sample data is illustrative, not verified market data
 
 Next, in priority order: price history, per-site trend comparison, and moderation

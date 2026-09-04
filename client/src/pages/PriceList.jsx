@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PriceCard from '../components/PriceCard.jsx';
+import PriceActionModal from '../components/PriceActionModal.jsx';
 
-export default function PriceList({ prices, loading }) {
+const OFFLINE_REASON = 'Editing is unavailable while demo data is being shown.';
+
+export default function PriceList({ prices, loading, offline, onEdit, onDelete }) {
   const [search, setSearch] = useState('');
   const [market, setMarket] = useState('All');
+  // { mode: 'edit' | 'delete', price } — null when no dialog is open.
+  const [dialog, setDialog] = useState(null);
+  const [flash, setFlash] = useState('');
   const markets = ['All', ...new Set(prices.map(price => price.market))];
   const filtered = prices.filter(price =>
     price.fish.toLowerCase().includes(search.toLowerCase()) &&
@@ -15,6 +21,20 @@ export default function PriceList({ prices, loading }) {
     : 0;
   const lowest = filtered.length ? Math.min(...filtered.map(price => price.price)) : 0;
   const highest = filtered.length ? Math.max(...filtered.map(price => price.price)) : 0;
+
+  // Both handlers let the error bubble so the dialog can keep itself open and
+  // show "Incorrect edit PIN." The dialog only closes when the call succeeded.
+  const handleEditConfirm = async entry => {
+    await onEdit(dialog.price._id, entry);
+    setDialog(null);
+    setFlash('Price report updated successfully.');
+  };
+
+  const handleDeleteConfirm = async editPin => {
+    await onDelete(dialog.price._id, editPin);
+    setDialog(null);
+    setFlash('Price report deleted successfully.');
+  };
 
   if (loading) {
     return (
@@ -34,6 +54,15 @@ export default function PriceList({ prices, loading }) {
         Prices per kilo, reported by fishermen and sellers at the landing site. Search a fish or
         filter by site to compare.
       </p>
+
+      {flash && (
+        <p className="flash" role="status">
+          {flash}
+          <button className="flash-dismiss" type="button" onClick={() => setFlash('')}>
+            Dismiss
+          </button>
+        </p>
+      )}
 
       <div className="section">
         <div className="filters">
@@ -88,9 +117,29 @@ export default function PriceList({ prices, loading }) {
       ) : (
         <div className="price-grid">
           {filtered.map(price => (
-            <PriceCard key={price._id} price={price} />
+            <PriceCard
+              key={price._id}
+              price={price}
+              onEdit={target => { setFlash(''); setDialog({ mode: 'edit', price: target }); }}
+              onDelete={target => { setFlash(''); setDialog({ mode: 'delete', price: target }); }}
+              actionsDisabled={offline}
+              disabledReason={OFFLINE_REASON}
+            />
           ))}
         </div>
+      )}
+
+      {offline && filtered.length > 0 && (
+        <p className="muted" style={{ marginTop: 'var(--gap-md)' }}>{OFFLINE_REASON}</p>
+      )}
+
+      {dialog && (
+        <PriceActionModal
+          mode={dialog.mode}
+          price={dialog.price}
+          onConfirm={dialog.mode === 'edit' ? handleEditConfirm : handleDeleteConfirm}
+          onClose={() => setDialog(null)}
+        />
       )}
 
       <section className="panel section" style={{ marginTop: '32px' }}>
