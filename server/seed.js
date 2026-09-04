@@ -2,7 +2,14 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Price from './models/Price.js';
 
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const seedData = [
   {
@@ -65,13 +72,11 @@ const seedData = [
 
 const seedDatabase = async () => {
   try {
-    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
-    if (!mongoUri) {
-      throw new Error('MONGO_URI / MONGODB_URI is not defined in environment variables');
-    }
+    const ATLAS_URI = 'mongodb+srv://janithchamika20030411_db_user:Janith123@cluster0.u9ling9.mongodb.net/fish-price-board?retryWrites=true&w=majority';
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || ATLAS_URI;
 
     await mongoose.connect(mongoUri);
-    console.log('MongoDB connected for seeding');
+    console.log('MongoDB connected for seeding (' + (mongoUri.includes('mongodb.net') ? 'Atlas' : 'Local') + ')');
 
     await Price.deleteMany({});
     await Price.insertMany(seedData);

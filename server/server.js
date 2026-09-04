@@ -4,7 +4,15 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import priceRoutes from './routes/priceRoutes.js';
 
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from server directory or root directory
+dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,21 +40,19 @@ app.use((req, res) => {
   });
 });
 
-const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+const ATLAS_URI = 'mongodb+srv://janithchamika20030411_db_user:Janith123@cluster0.u9ling9.mongodb.net/fish-price-board?retryWrites=true&w=majority';
+const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || ATLAS_URI;
 
-if (!mongoUri) {
-  console.error('DB connection failed: MONGO_URI / MONGODB_URI is not defined in environment variables');
-} else {
-  // Start server only after successful MongoDB connection
-  mongoose.connect(mongoUri)
-    .then(() => {
-      console.log('MongoDB connected');
+// Start server only after successful MongoDB connection
+mongoose.connect(mongoUri)
+  .then(() => {
+    const isAtlas = mongoUri.includes('mongodb.net');
+    console.log(`MongoDB connected (${isAtlas ? 'MongoDB Atlas' : 'Local MongoDB'})`);
 
-      app.listen(PORT, () => {
-        console.log(`API running on port ${PORT}`);
-      });
-    })
-    .catch((err) => {
-      console.error('DB connection failed:', err.message);
+    app.listen(PORT, () => {
+      console.log(`API running on port ${PORT}`);
     });
-}
+  })
+  .catch((err) => {
+    console.error('DB connection failed:', err.message);
+  });
