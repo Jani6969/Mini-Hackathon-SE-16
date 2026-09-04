@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import SeaBackdrop from './components/SeaBackdrop';
 import Home from './pages/Home';
 import AddPrice from './pages/AddPrice';
 import PriceList from './pages/PriceList';
@@ -39,6 +40,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="app-shell">
+        <SeaBackdrop />
         <Navbar offline={offline} />
         <main>
           <Routes>

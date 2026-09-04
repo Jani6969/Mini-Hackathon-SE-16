@@ -19,7 +19,7 @@ export default function Navbar({ offline = false }) {
           Report Price
         </NavLink>
       </div>
-      {offline && <span className="offline-pill">Sample data</span>}
+      {offline && <span className="offline-pill">Sample tide</span>}
     </nav>
   );
 }

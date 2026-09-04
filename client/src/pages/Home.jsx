@@ -10,9 +10,9 @@ export default function Home({ prices = [] }) {
     <div className="page home-page">
       <header className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">Negombo landing sites · live this morning</p>
+          <p className="eyebrow">Negombo coast · live this morning</p>
           <h1>
-            Know the price
+            Read the tide
             <span>before you sell.</span>
           </h1>
           <p className="hero-lead">

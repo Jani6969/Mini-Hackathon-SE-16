@@ -35,7 +35,7 @@ export default function PriceList({ prices = [], loading = false }) {
     <div className="page">
       <div className="page-head">
         <div>
-          <p className="eyebrow">Live landing board</p>
+          <p className="eyebrow">Morning tide · live board</p>
           <h1>Today's Prices</h1>
           <p className="muted">
             Search a fish, filter a landing site, and check the live average before you sell.
