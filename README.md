@@ -6,7 +6,7 @@ Today's fish prices across Negombo landing sites, reported by the people who are
 
 | | |
 |---|---|
-| **Live app** | [negombo-fish-price-board.vercel.app](https://negombo-fish-price-board.vercel.app) |
+| **Live app** | [negombo-fish-price-board-sithmi.vercel.app](https://negombo-fish-price-board-sithmi.vercel.app) |
 | **API** | [Price data](https://api-production-e135.up.railway.app/api/prices) |
 | **API health** | [Health probe](https://api-production-e135.up.railway.app/health) |
 | **Demo video** | `<onedrive-link>` |
