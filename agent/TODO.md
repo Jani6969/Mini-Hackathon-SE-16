@@ -15,10 +15,16 @@
 
 ## Current
 
-**Phase 0 not started.** Repo contains planning and agent docs only. No `client/`,
-no `server/`, no `package.json`, no git repository initialised.
+**MVP built and deployed** (commits `750d3ef`, `dad52ba`). The phase checkboxes
+below were never ticked during that build and are stale — treat git history, not
+the boxes, as the record of what exists.
 
-**Next action:** T0.1.
+**This session (branch `claude/stitch-mcp-setup-ff4fb1`):** the client UI was
+rebuilt to the dark "dockside terminal" theme designed in Google Stitch. Backend,
+API, schema and data model are untouched.
+
+**Next action:** decide whether the UI rebuild merges to `main` before
+submission, and replace the three placeholder fish photos.
 
 ---
 
@@ -530,20 +536,41 @@ no `server/`, no `package.json`, no git repository initialised.
 
 None.
 
+## Next
+
+- [ ] Replace the three placeholder fish photos — `client/public/fish/kelawalla.jpg`,
+      `hurulla.jpg`, `koduwa.jpg` (and `default.jpg`). Overwrite the file at the
+      same path; `client/src/data/fishImages.js` needs no change.
+- [ ] `client/package-lock.json` is now tracked. Confirm the other members run
+      `npm install` in `client/` before their next local run.
+- [ ] Member D (Samaranayaka S.G.V.S) owns `client/src/index.css` and `design.md`
+      per `design.md`'s own ownership line. Both were rewritten this session by
+      another hand — get their sign-off.
+- [ ] Re-verify the deployed Vercel build in incognito and on a phone over mobile
+      data once the UI rebuild is merged.
+
 ## Done
 
-Nothing yet — Phase 0 has not started.
+- **2026-09-04** — Client UI rebuilt to the dark dockside-terminal theme
+  (Home, Prices, Report, 404). Verified: production build passes, no console
+  errors, validation renders, no horizontal scroll at 320px, focus rings intact.
 
 ## Last session
 
-**2026-09-04** — Project scaffolded from the universal agent template. Copied and
-pruned `.claude/`, `rules/`, `skills/`, `workflows/`, `docs/`, `agent/`. Wrote all
-project-specific documents: `CLAUDE.md` (PROJECT_MODE), `START_HERE.md`,
-`AGENTS.md`, `README.md` skeleton, `AI-PROMPT-LOG.md`, `design.md`,
-`agent/BRIEF.md`, this file, `agent/DECISIONS.md`, `agent/MEMORY.md`, and
-`docs/{ARCHITECTURE, requirements, RUBRIC, ENV_VARS, DEPLOYMENT, TESTING, TEAM,
-VIVA, SUBMISSION, TROUBLESHOOTING, changelog}.md`. **No application code written
-yet.** The next agent starts at **T0.1**.
+**2026-09-04** — Added the Google Stitch MCP server to Claude Code (user scope),
+then rebuilt the client UI from the Stitch designs in project
+`Website Homepage Design`.
+
+Rewrote `client/src/index.css` (30 → ~480 lines) as a token-based dark design
+system, and rebuilt `Home`, `PriceList`, `AddPrice`, `NotFound` and `Navbar` to
+match the mockups. Added `PriceCard`, `Footer` and `fishImages.js`, plus image
+assets under `client/public/`. Updated `design.md` to match what was built.
+
+Stitch's own export is Tailwind-via-CDN; it was **not** adopted — everything was
+rewritten as plain CSS so the stack table in `CLAUDE.md` still holds. No backend,
+schema, API or dependency changes. Decorative panels in the mockups that had no
+real data behind them (live ticker, market-spread chart, boat names, grade chips)
+were deliberately dropped rather than filled with invented market figures.
 
 ## Update rule
 

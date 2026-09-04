@@ -1,42 +1,130 @@
 import { Link } from 'react-router-dom';
 
-export default function Home() {
+const STEPS = [
+  {
+    title: 'Report what you sold',
+    body: 'A fisherman or seller picks the fish, the landing site and the price per kilo, and adds their name.'
+  },
+  {
+    title: 'It reaches the board',
+    body: 'The report is saved and appears at the top of the public price list straight away.'
+  },
+  {
+    title: 'Everyone can compare',
+    body: 'Buyers and other fishermen search, filter by landing site, and see the current average before agreeing a price.'
+  }
+];
+
+export default function Home({ prices = [] }) {
+  const average = prices.length
+    ? Math.round(prices.reduce((total, price) => total + price.price, 0) / prices.length)
+    : 0;
+  const sites = new Set(prices.map(price => price.market)).size;
+
   return (
-    <main>
+    <main className="page">
       <section className="hero">
-        <div className="hero-image" role="img" aria-label="Fresh fish on ice beside Negombo lagoon at sunrise" />
-        <div className="hero-overlay" />
-        <div className="hero-content">
-          <p className="eyebrow"><span /> Community prices · Negombo coast</p>
-          <h1>Know today’s catch.<br />Trade with confidence.</h1>
-          <p className="hero-copy">A clear, shared view of community-reported fish prices across Negombo Main, Duwa Landing and Pitipana.</p>
+        <div>
+          <p className="eyebrow">Negombo · Daily landing-site prices</p>
+          <h1>
+            Fair, transparent fish prices across <span className="accent">Negombo landing sites</span>
+          </h1>
+          <p className="lede">
+            A public board where fishermen and buyers report today&apos;s price per kilo, then compare
+            it against other landing sites before agreeing a sale.
+          </p>
           <div className="hero-actions">
-            <Link className="button button-primary" to="/prices">Explore live prices</Link>
-            <Link className="button button-secondary" to="/add">Report today’s price</Link>
+            <Link className="btn btn-primary" to="/prices">
+              View today&apos;s prices
+            </Link>
+            <Link className="btn btn-ghost" to="/add">
+              Report a price
+            </Link>
+          </div>
+        </div>
+        <figure className="hero-figure">
+          <img src="/hero.jpg" alt="Fresh fish on ice at a Negombo landing site" width="1600" height="900" />
+        </figure>
+      </section>
+
+      <section className="section">
+        <div className="stats">
+          <div className="stat">
+            <p className="stat-label">Reports on the board</p>
+            <p className="stat-value">{prices.length}</p>
+          </div>
+          <div className="stat">
+            <p className="stat-label">Average price</p>
+            <p className="stat-value up">Rs. {average} /kg</p>
+          </div>
+          <div className="stat">
+            <p className="stat-label">Landing sites</p>
+            <p className="stat-value">{sites}</p>
+          </div>
+          <div className="stat">
+            <p className="stat-label">Cost to use</p>
+            <p className="stat-value">Free</p>
           </div>
         </div>
       </section>
-      <div className="page home-page">
-        <section className="metric-strip" aria-label="Board coverage">
-          <div><strong>3</strong><span>landing sites</span></div>
-          <div><strong>7</strong><span>local fish types</span></div>
-          <div><strong>Live</strong><span>community reports</span></div>
-        </section>
-        <section className="section-heading">
-          <div><p className="eyebrow dark"><span /> Built for the landing site</p><h2>One useful signal, right when it matters.</h2></div>
-          <p>Simple enough to use outdoors, clear enough to support a better conversation before agreeing a sale.</p>
-        </section>
-        <section className="story-grid">
-          <article className="story-card story-card-featured story-market"><span className="story-number">01</span><h3>The price-information gap</h3><p>Small-scale fishermen and buyers often need to make quick decisions without one shared view of nearby reported prices. The same catch can be compared across three selected Negombo landing sites.</p></article>
-          <article className="story-card"><span className="story-number">02</span><h3>Report in seconds</h3><p>Select a fish, landing site and price. Friendly validation keeps every report clear and useful.</p></article>
-          <article className="story-card"><span className="story-number">03</span><h3>Compare instantly</h3><p>Search and filter recent reports, then use the live average as a practical reference before trading.</p></article>
-        </section>
-        <section className="landing-sites">
-          <div><p className="eyebrow dark"><span /> Local coverage</p><h2>Three landing sites.<br />One shared board.</h2></div>
-          <div className="site-list"><span>Negombo Main <b>01</b></span><span>Duwa Landing <b>02</b></span><span>Pitipana <b>03</b></span></div>
-        </section>
-        <section className="notice" role="note"><span className="notice-icon" aria-hidden="true">i</span><p><strong>Community prototype</strong> Prices shown are sample or community-reported references. They are not official market quotations.</p></section>
-      </div>
+
+      <section className="section">
+        <p className="eyebrow">Why this exists</p>
+        <h2>The problem</h2>
+        <div className="card-list">
+          <div className="info-card">
+            <h3>Prices are scattered</h3>
+            <p>
+              Small-scale fishermen and buyers around Negombo often need to make quick selling and
+              buying decisions. Price information from nearby landing sites is not always available in
+              one shared place when it is needed.
+            </p>
+          </div>
+          <div className="info-card">
+            <h3>No time to shop around</h3>
+            <p>
+              A fisherman at Negombo Main may want to compare the reported price for the same fish at
+              Duwa Landing or Pitipana before agreeing to a sale — but the boat is unloading now.
+            </p>
+          </div>
+          <div className="info-card">
+            <h3>Our solution</h3>
+            <p>
+              A public community price board where anyone can report a fish price for a landing site,
+              then browse, search and filter recent reports and see the average of the current
+              results.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <p className="eyebrow">How it works</p>
+        <h2>Three steps, no account needed</h2>
+        <div className="card-list">
+          {STEPS.map((step, index) => (
+            <div className="info-card" key={step.title}>
+              <span className="step-number">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <p className="eyebrow">Who it helps</p>
+        <h2>Built for the dock, not the desk</h2>
+        <p className="lede">
+          Small-scale fishermen, buyers and retail sellers using Negombo Main, Duwa Landing and
+          Pitipana who want a faster price reference before trading.
+        </p>
+      </section>
+
+      <section className="notice">
+        <strong>Prototype notice:</strong> Prices supplied with this hackathon build are
+        sample/illustrative data and are not official market quotations.
+      </section>
     </main>
   );
 }

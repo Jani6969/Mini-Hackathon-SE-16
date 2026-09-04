@@ -1,19 +1,40 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
-export default function Navbar() {
+const LINKS = [
+  { to: '/', label: 'Home', end: true },
+  { to: '/prices', label: "Today's Prices" },
+  { to: '/add', label: 'Report Price' }
+];
+
+export default function Navbar({ landingSites, entryCount }) {
   return (
-    <header className="site-header">
+    <>
+      <div className="topstrip">
+        <div className="shell">
+          <span className="live">● Community reported</span>
+          <span>{landingSites} landing sites · {entryCount} entries</span>
+        </div>
+      </div>
       <nav className="nav" aria-label="Primary navigation">
-        <NavLink className="brand" to="/" aria-label="Negombo Fish Price Board home">
-          <img className="brand-mark" src="/images/stitch-logo-mark.jpg" alt="" />
-          <span>Negombo <b>Fish Board</b></span>
-        </NavLink>
-        <div className="nav-links">
-          <NavLink to="/" end>Home</NavLink>
-          <NavLink to="/prices">Dashboard</NavLink>
-          <NavLink className="nav-cta" to="/add">Report price</NavLink>
+        <div className="shell">
+          <Link to="/" className="brand">
+            <img src="/logo.png" alt="" width="32" height="32" />
+            Negombo Fish Price Board
+          </Link>
+          <div className="nav-links">
+            {LINKS.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.end}
+                className={({ isActive }) => (isActive ? 'active' : undefined)}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
         </div>
       </nav>
-    </header>
+    </>
   );
 }

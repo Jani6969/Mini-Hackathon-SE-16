@@ -287,3 +287,62 @@ Someone may assume "no AI feature" means "no AI use". The prompt log and the
 README AI declaration prevent that misreading.
 
 **Status:** Accepted
+
+---
+
+### 2026-09-04 — Adopt the Stitch dark theme, but rewrite it as plain CSS
+
+**Decision:**
+Rebuild the client UI to the dark "dockside terminal" theme designed in Google
+Stitch (project `Website Homepage Design`), hand-written as plain CSS with
+`:root` custom properties. Stitch's own export — Tailwind loaded from a CDN plus
+an inline config — was not adopted.
+
+**Reason:**
+Pasting the Stitch export would have added a render-blocking third-party script,
+a CDN dependency on the critical path, and a contradiction with the stack table
+in `CLAUDE.md` that the team has to defend in the viva. Rewriting the same design
+as plain CSS keeps the stack answer true, adds no dependency to `package.json`,
+and produces a 2.5 kB gzipped stylesheet.
+
+**Alternatives considered:**
+1. Tokens only — lift the palette and fonts, keep the existing layouts. Cheapest,
+   but does not deliver the design that was asked for.
+2. Adopt the Tailwind CDN export verbatim — fastest to paste, but breaks the
+   stack story and adds a network dependency for users on mobile data.
+
+**Risk:**
+`design.md` previously listed dark mode, web fonts and theming tokens as
+explicitly out of scope, and names Member D as the sole owner of
+`client/src/index.css`. Both the stylesheet and `design.md` were rewritten by
+another hand this session; Member D needs to sign off. The two Google Fonts add
+one network request, mitigated by `display=swap` and real system fallbacks.
+
+**Status:** Accepted, pending Member D sign-off
+
+---
+
+### 2026-09-04 — Drop the mockup panels that had no real data behind them
+
+**Decision:**
+The Stitch mockups show a live price ticker, a market-spread chart, boat names,
+catch-grade chips and landing-zone statistics. None of these exist in the
+`Price` schema (`fish`, `market`, `price`, `seller`, `date`). They were dropped
+rather than populated with invented figures. The stats strips show only values
+derived from real records: count, average, lowest, highest.
+
+**Reason:**
+`CLAUDE.md` requires that sample prices are never presented as official or
+verified market quotations. Fabricated ticker and spread data would read as
+market information the prototype does not have, which is precisely the failure
+the prototype notice exists to prevent.
+
+**Alternatives considered:**
+Extending the schema to carry grade, quantity and boat name — rejected as scope
+creep against a locked data model, with no rubric credit attached.
+
+**Risk:**
+The shipped pages are visually simpler than the mockups. Acceptable: the mockups
+are a design reference, not a deliverable.
+
+**Status:** Accepted
