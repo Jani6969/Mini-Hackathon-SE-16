@@ -6,9 +6,9 @@ Today's fish prices across Negombo landing sites, reported by the people who are
 
 | | |
 |---|---|
-| **Live app** | `<vercel-url>` |
-| **API** | `<railway-url>/api/prices` |
-| **API health** | `<railway-url>/health` |
+| **Live app** | [negombo-fish-price-board.vercel.app](https://negombo-fish-price-board.vercel.app) |
+| **API** | [Price data](https://api-production-e135.up.railway.app/api/prices) |
+| **API health** | [Health probe](https://api-production-e135.up.railway.app/health) |
 | **Demo video** | `<onedrive-link>` |
 | **GitHub** | [Jani6969/Mini-Hackathon-SE-16](https://github.com/Jani6969/Mini-Hackathon-SE-16) |
 
@@ -82,8 +82,8 @@ Detail: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 
 ## Deployment Verification
 
-- API health: `<railway-url>/health` → `status: ok`, `database: connected`
-- API data: `<railway-url>/api/prices` → returns JSON
+- API health: [Railway health probe](https://api-production-e135.up.railway.app/health) → `status: ok`, `database: connected`
+- API data: [Railway price data](https://api-production-e135.up.railway.app/api/prices) → returns JSON
 - Frontend tested in an incognito window
 - Frontend tested on a phone using mobile data
 - A price submitted from the deployed site was verified in MongoDB Atlas →

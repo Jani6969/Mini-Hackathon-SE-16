@@ -23,10 +23,10 @@ Upload by **12:55**, not 12:59.
 
 | Thing | URL |
 |---|---|
-| GitHub repository | |
-| Vercel (live app) | |
-| Railway API base | |
-| Health probe | `<railway>/health` |
+| GitHub repository | https://github.com/Jani6969/Mini-Hackathon-SE-16 |
+| Vercel (live app) | https://negombo-fish-price-board.vercel.app |
+| Railway API base | https://api-production-e135.up.railway.app |
+| Health probe | https://api-production-e135.up.railway.app/health |
 | Demo video (OneDrive) | |
 
 ---

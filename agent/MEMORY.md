@@ -49,10 +49,10 @@ Fill these in during Phase 6 and keep them here for handoff.
 
 | Thing | URL |
 |---|---|
-| GitHub repo | _TBD_ |
-| Vercel (frontend) | _TBD_ |
-| Railway (API) | _TBD_ |
-| Railway health probe | _TBD_`/health` |
+| GitHub repo | https://github.com/Jani6969/Mini-Hackathon-SE-16 |
+| Vercel (frontend) | https://negombo-fish-price-board.vercel.app |
+| Railway (API) | https://api-production-e135.up.railway.app |
+| Railway health probe | https://api-production-e135.up.railway.app/health |
 | Demo video (OneDrive) | _TBD_ |
 
 ---
