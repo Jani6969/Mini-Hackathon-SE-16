@@ -1,12 +1,41 @@
-.DS_Store
+# Environment and secrets
 .env
-.env.local
+.env.*
+!.env.example
+
+# Dependencies
 node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build
 dist/
 build/
-bin/
-obj/
-*.user
-.vs/
-.idea/
+coverage/
+*.egg-info/
+
+# OS
+.DS_Store
+__MACOSX/
+Thumbs.db
+
+# Logs
 *.log
+logs/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code local settings (keep project settings)
+.claude/settings.local.json
+
+# Post-session wrap-up state (cooldown timestamp)
+.claude/.wrap-state
+
+# Real deployment config — host/path/command per project (keep the example)
+deploy/deploy.config.json
