@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function PriceList({ prices = [], loading = false }) {
   const [search, setSearch] = useState('');
@@ -27,7 +28,15 @@ export default function PriceList({ prices = [], loading = false }) {
 
   return (
     <div className="page">
-      <h1>Today's Prices</h1>
+      <div className="page-head">
+        <div>
+          <h1>Today's Prices</h1>
+          <p className="muted">Search a fish, filter a landing site, and check the live average before you sell.</p>
+        </div>
+        <Link className="btn" to="/add">
+          Report a price
+        </Link>
+      </div>
 
       <div className="filters">
         <input
@@ -52,21 +61,20 @@ export default function PriceList({ prices = [], loading = false }) {
 
       <p className="summary">
         Showing <b>{filtered.length}</b> {filtered.length === 1 ? 'entry' : 'entries'}
-        {' · '}Average price <b>Rs. {avg}</b> /kg
+        {' · '}Average price <b>Rs. {avg.toLocaleString('en-LK')}</b> /kg
       </p>
 
       {filtered.length === 0 && (
-        <p className="muted">No prices found for that search.</p>
+        <p className="muted empty-state">No prices found for that search.</p>
       )}
 
       <div className="grid">
         {filtered.map((p) => (
-          <div className="card" key={p._id}>
+          <div className="card price-card" key={p._id}>
+            <p className="site-chip">{p.market}</p>
             <h3>{p.fish}</h3>
-            <p className="price">Rs. {p.price} /kg</p>
-            <p>
-              {p.market} · {p.date}
-            </p>
+            <p className="price">Rs. {Number(p.price).toLocaleString('en-LK')} /kg</p>
+            <p className="muted">{p.date}</p>
             <p className="muted">Reported by {p.seller}</p>
           </div>
         ))}

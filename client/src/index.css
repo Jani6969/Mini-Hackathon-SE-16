@@ -1,0 +1,272 @@
+:root {
+  --navy: #0c2d4a;
+  --navy-deep: #081c30;
+  --sea: #1b7a74;
+  --sand: #f3eee4;
+  --paper: #fffdf8;
+  --ink: #16324f;
+  --muted: #5d7288;
+  --line: #d7cfc0;
+  --coral: #c45c26;
+  --danger: #b42318;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 400px at 10% -10%, rgba(27, 122, 116, 0.14), transparent 50%),
+    var(--sand);
+  color: var(--ink);
+  font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+p {
+  margin: 0 0 12px;
+}
+
+a {
+  color: var(--sea);
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--navy-deep);
+  color: #fff;
+  padding: 14px 20px;
+}
+
+.nav a {
+  color: #d7e6f2;
+  margin-left: 16px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.offline-pill {
+  background: #8a5a12;
+  color: #fff8e8;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.hero {
+  margin-bottom: 22px;
+}
+
+.hero-lead {
+  max-width: 640px;
+  font-size: 1.05rem;
+}
+
+.hero-actions,
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 8px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sea);
+  margin-bottom: 8px;
+}
+
+.card {
+  background: var(--paper);
+  border-radius: 14px;
+  padding: 18px 18px 14px;
+  box-shadow: 0 8px 24px rgba(8, 28, 48, 0.06);
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.price-card h3 {
+  min-height: 2.4em;
+}
+
+.site-chip {
+  display: inline-block;
+  background: #e4f3f1;
+  color: var(--sea);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.filters input {
+  flex: 2;
+  min-width: 200px;
+}
+
+.filters select {
+  flex: 1;
+  min-width: 150px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 16px;
+  background: #fff;
+  color: var(--ink);
+}
+
+button,
+.btn {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  border: 0;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--navy);
+  border: 1.5px solid var(--navy);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+
+.price {
+  color: var(--coral);
+  font-size: 22px;
+  font-weight: 800;
+  margin: 6px 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.summary {
+  background: #e7f2f1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cfe3e0;
+}
+
+.empty-state,
+.not-found {
+  text-align: center;
+}
+
+.form-card {
+  max-width: 560px;
+}
+
+@media (max-width: 600px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav a {
+    margin: 0 16px 0 0;
+  }
+
+  .page-head,
+  .hero-actions {
+    align-items: stretch;
+  }
+
+  .btn,
+  button {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -20,4 +20,12 @@ Mandatory log (spec §2.2). Redact secrets. Record tool, exact prompt, purpose, 
 | **Purpose** | Add MongoDB connection layer and Express API so price records can be stored in Atlas. |
 | **Exact prompt (summary)** | Help with the MongoDB database connections for the Negombo Fish Price Board. |
 | **Output received** | `server/db.js`, `server/server.js`, `server/models/Price.js`, `server/routes/priceRoutes.js`, `server/seed.js`, `server/.env.example`. |
-| **How it was checked / modified** | Connection is isolated in `db.js` (connect, status, disconnect). `.env` is gitignored. Live Atlas connect was not completed because no `MONGO_URI` was provided and no local MongoDB is installed. |
+| **How it was checked / modified** | Connection is isolated in `db.js`. Collaborator Atlas cluster connected and 8 records were seeded. Local API served on port 5052 because macOS AirPlay uses 5000. |
+
+| Field | Detail |
+|---|---|
+| **Tool** | Cursor (Grok) |
+| **Purpose** | Build the React UI (landing page, navigation, form, price cards, responsive CSS) and wire it to the live API. |
+| **Exact prompt (summary)** | Proceed with the UI/UX implementation. |
+| **Output received** | Vite client scaffold, Home, Navbar, AddPrice, PriceList, NotFound, `index.css`, `priceApi.js`, sample data. |
+| **How it was checked / modified** | Kept plan class names and Member C list logic. Added coastal styling, active nav, empty/loading states, and API fallback to sample data if the server is down. |

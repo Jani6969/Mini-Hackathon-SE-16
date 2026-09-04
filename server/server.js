@@ -34,7 +34,7 @@ const PORT = process.env.PORT || 5000;
 
 connectDB()
   .then(() => {
-    app.listen(PORT, () => console.log(`API on ${PORT}`));
+    app.listen(PORT, '0.0.0.0', () => console.log(`API on ${PORT}`));
   })
   .catch((err) => {
     console.error('DB connection failed:', err.message);
