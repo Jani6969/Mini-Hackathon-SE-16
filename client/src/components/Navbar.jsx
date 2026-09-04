@@ -1,14 +1,40 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
-export default function Navbar() {
+const LINKS = [
+  { to: '/', label: 'Home', end: true },
+  { to: '/prices', label: "Today's Prices" },
+  { to: '/add', label: 'Report Price' }
+];
+
+export default function Navbar({ landingSites, entryCount }) {
   return (
-    <nav className="nav" aria-label="Primary navigation">
-      <span className="brand">🐟 Negombo Price Board</span>
-      <div>
-        <Link to="/">Home</Link>
-        <Link to="/prices">Prices</Link>
-        <Link to="/add">Report Price</Link>
+    <>
+      <div className="topstrip">
+        <div className="shell">
+          <span className="live">● Community reported</span>
+          <span>{landingSites} landing sites · {entryCount} entries</span>
+        </div>
       </div>
-    </nav>
+      <nav className="nav" aria-label="Primary navigation">
+        <div className="shell">
+          <Link to="/" className="brand">
+            <img src="/logo.png" alt="" width="32" height="32" />
+            Negombo Fish Price Board
+          </Link>
+          <div className="nav-links">
+            {LINKS.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.end}
+                className={({ isActive }) => (isActive ? 'active' : undefined)}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+      </nav>
+    </>
   );
 }

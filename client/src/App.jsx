@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 import Home from './pages/Home.jsx';
 import AddPrice from './pages/AddPrice.jsx';
 import PriceList from './pages/PriceList.jsx';
@@ -40,18 +41,22 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar
+        landingSites={new Set(prices.map(price => price.market)).size}
+        entryCount={prices.length}
+      />
       {offline && (
         <div className="offline-banner" role="status">
           API unavailable — showing demonstration sample data. New entries in this mode are not persisted to MongoDB.
         </div>
       )}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home prices={prices} />} />
         <Route path="/prices" element={<PriceList prices={prices} loading={loading} />} />
         <Route path="/add" element={<AddPrice onAdd={addPrice} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
