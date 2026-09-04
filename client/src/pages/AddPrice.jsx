@@ -56,57 +56,92 @@ export default function AddPrice({ onAdd }) {
   };
 
   return (
-    <div className="page">
-      <h1>Report Today's Price</h1>
-      <p className="muted">Share what a fish is selling for at your landing site this morning.</p>
+    <div className="page add-page">
+      <div className="page-head">
+        <div>
+          <p className="eyebrow">Field report</p>
+          <h1>Report Today's Price</h1>
+          <p className="muted">Share what a fish is selling for at your landing site this morning.</p>
+        </div>
+      </div>
 
-      <div className="card form-card">
-        <label htmlFor="fish">Fish type</label>
-        <select id="fish" value={form.fish} onChange={(e) => handleChange('fish', e.target.value)}>
-          <option value="">-- Select --</option>
-          {FISH.map((f) => (
-            <option key={f} value={f}>
-              {f}
-            </option>
-          ))}
-        </select>
-        {errors.fish && <p className="error">{errors.fish}</p>}
+      <div className="form-layout">
+        <div className="card form-card">
+          <div className="form-grid">
+            <div>
+              <label htmlFor="fish">Fish type</label>
+              <select id="fish" value={form.fish} onChange={(e) => handleChange('fish', e.target.value)}>
+                <option value="">-- Select --</option>
+                {FISH.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
+              </select>
+              {errors.fish && <p className="error">{errors.fish}</p>}
+            </div>
 
-        <label htmlFor="market">Landing site</label>
-        <select id="market" value={form.market} onChange={(e) => handleChange('market', e.target.value)}>
-          <option value="">-- Select --</option>
-          {MARKETS.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
-        {errors.market && <p className="error">{errors.market}</p>}
+            <div>
+              <label htmlFor="market">Landing site</label>
+              <select
+                id="market"
+                value={form.market}
+                onChange={(e) => handleChange('market', e.target.value)}
+              >
+                <option value="">-- Select --</option>
+                {MARKETS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              {errors.market && <p className="error">{errors.market}</p>}
+            </div>
 
-        <label htmlFor="price">Price per kg (Rs.)</label>
-        <input
-          id="price"
-          value={form.price}
-          onChange={(e) => handleChange('price', e.target.value)}
-          placeholder="e.g. 950"
-          inputMode="decimal"
-        />
-        {errors.price && <p className="error">{errors.price}</p>}
+            <div>
+              <label htmlFor="price">Price per kg (Rs.)</label>
+              <input
+                id="price"
+                value={form.price}
+                onChange={(e) => handleChange('price', e.target.value)}
+                placeholder="e.g. 950"
+                inputMode="decimal"
+              />
+              {errors.price && <p className="error">{errors.price}</p>}
+            </div>
 
-        <label htmlFor="seller">Your name</label>
-        <input
-          id="seller"
-          value={form.seller}
-          onChange={(e) => handleChange('seller', e.target.value)}
-          placeholder="e.g. Nimal"
-        />
-        {errors.seller && <p className="error">{errors.seller}</p>}
+            <div>
+              <label htmlFor="seller">Your name</label>
+              <input
+                id="seller"
+                value={form.seller}
+                onChange={(e) => handleChange('seller', e.target.value)}
+                placeholder="e.g. Nimal"
+              />
+              {errors.seller && <p className="error">{errors.seller}</p>}
+            </div>
+          </div>
 
-        {apiError && <p className="error">{apiError}</p>}
+          {apiError && <p className="error">{apiError}</p>}
 
-        <button type="button" onClick={handleSubmit} disabled={saving}>
-          {saving ? 'Saving...' : 'Submit Price'}
-        </button>
+          <button type="button" onClick={handleSubmit} disabled={saving}>
+            {saving ? 'Saving...' : 'Submit Price'}
+          </button>
+        </div>
+
+        <aside className="card form-aside">
+          <p className="eyebrow">Before you post</p>
+          <h3>Use the price you just agreed.</h3>
+          <p className="muted">
+            Report per kilo, not per pile. A honest number at Duwa helps someone at Pitipana ten
+            minutes later.
+          </p>
+          <ul>
+            <li>Empty fields show a clear message</li>
+            <li>Price must be a number from 1 to 10,000</li>
+            <li>Your name needs at least 3 characters</li>
+          </ul>
+        </aside>
       </div>
     </div>
   );

@@ -1,17 +1,25 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 export default function Navbar({ offline = false }) {
   return (
     <nav className="nav">
-      <span className="brand">Negombo Price Board</span>
+      <Link to="/" className="brand">
+        <span className="brand-mark" aria-hidden="true" />
+        <span>
+          <strong>Negombo</strong>
+          <em>Price Board</em>
+        </span>
+      </Link>
       <div className="nav-links">
         <NavLink to="/" end>
           Home
         </NavLink>
         <NavLink to="/prices">Prices</NavLink>
-        <NavLink to="/add">Report Price</NavLink>
+        <NavLink to="/add" className="nav-cta">
+          Report Price
+        </NavLink>
       </div>
-      {offline && <span className="offline-pill">Showing sample data</span>}
+      {offline && <span className="offline-pill">Sample data</span>}
     </nav>
   );
 }

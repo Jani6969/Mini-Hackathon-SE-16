@@ -21,7 +21,12 @@ export default function PriceList({ prices = [], loading = false }) {
   if (loading) {
     return (
       <div className="page">
-        <p>Loading prices...</p>
+        <div className="skeleton-block" />
+        <div className="grid">
+          <div className="skeleton-card" />
+          <div className="skeleton-card" />
+          <div className="skeleton-card" />
+        </div>
       </div>
     );
   }
@@ -30,54 +35,73 @@ export default function PriceList({ prices = [], loading = false }) {
     <div className="page">
       <div className="page-head">
         <div>
+          <p className="eyebrow">Live landing board</p>
           <h1>Today's Prices</h1>
-          <p className="muted">Search a fish, filter a landing site, and check the live average before you sell.</p>
+          <p className="muted">
+            Search a fish, filter a landing site, and check the live average before you sell.
+          </p>
         </div>
         <Link className="btn" to="/add">
           Report a price
         </Link>
       </div>
 
-      <div className="filters">
-        <input
-          type="search"
-          placeholder="Search fish type..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          aria-label="Search fish type"
-        />
-        <select
-          value={market}
-          onChange={(e) => setMarket(e.target.value)}
-          aria-label="Filter by landing site"
-        >
-          {markets.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
+      <div className="toolbar card">
+        <div className="filters">
+          <input
+            type="search"
+            placeholder="Search fish type..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search fish type"
+          />
+          <select
+            value={market}
+            onChange={(e) => setMarket(e.target.value)}
+            aria-label="Filter by landing site"
+          >
+            {markets.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <p className="summary">
+          Showing <b>{filtered.length}</b> {filtered.length === 1 ? 'entry' : 'entries'}
+          {' · '}Average price <b>Rs. {avg.toLocaleString('en-LK')}</b> /kg
+        </p>
       </div>
 
-      <p className="summary">
-        Showing <b>{filtered.length}</b> {filtered.length === 1 ? 'entry' : 'entries'}
-        {' · '}Average price <b>Rs. {avg.toLocaleString('en-LK')}</b> /kg
-      </p>
-
       {filtered.length === 0 && (
-        <p className="muted empty-state">No prices found for that search.</p>
+        <div className="card empty-state">
+          <h3>No prices found for that search.</h3>
+          <p className="muted">Try another fish name, or switch the landing site back to All.</p>
+        </div>
       )}
 
       <div className="grid">
-        {filtered.map((p) => (
-          <div className="card price-card" key={p._id}>
-            <p className="site-chip">{p.market}</p>
-            <h3>{p.fish}</h3>
-            <p className="price">Rs. {Number(p.price).toLocaleString('en-LK')} /kg</p>
-            <p className="muted">{p.date}</p>
-            <p className="muted">Reported by {p.seller}</p>
-          </div>
-        ))}
+        {filtered.map((p) => {
+          const delta = avg ? Number(p.price) - avg : 0;
+          const tone = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+          return (
+            <div className="card price-card" key={p._id}>
+              <p className="site-chip">{p.market}</p>
+              <h3>{p.fish}</h3>
+              <p className="price">Rs. {Number(p.price).toLocaleString('en-LK')} <small>/kg</small></p>
+              <p className={`delta ${tone}`}>
+                {delta === 0 && 'In line with the current average'}
+                {delta > 0 && `Rs. ${delta.toLocaleString('en-LK')} above this view’s average`}
+                {delta < 0 && `Rs. ${Math.abs(delta).toLocaleString('en-LK')} below this view’s average`}
+              </p>
+              <div className="card-meta">
+                <span>{p.date}</span>
+                <span>Reported by {p.seller}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

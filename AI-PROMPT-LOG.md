@@ -28,4 +28,4 @@ Mandatory log (spec §2.2). Redact secrets. Record tool, exact prompt, purpose, 
 | **Purpose** | Build the React UI (landing page, navigation, form, price cards, responsive CSS) and wire it to the live API. |
 | **Exact prompt (summary)** | Proceed with the UI/UX implementation. |
 | **Output received** | Vite client scaffold, Home, Navbar, AddPrice, PriceList, NotFound, `index.css`, `priceApi.js`, sample data. |
-| **How it was checked / modified** | Kept plan class names and Member C list logic. Added coastal styling, active nav, empty/loading states, and API fallback to sample data if the server is down. |
+| **How it was checked / modified** | Kept plan class names and Member C list logic. First UI pass was too plain; redesigned with a dark hero, comparison panel, live stats, richer price cards, and a two-column report form. Validation and search/filter behaviour were left unchanged. |
