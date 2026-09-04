@@ -181,3 +181,35 @@ real value.
 **Still unknown:** the four GitHub usernames (for collaborator invites), the
 GitHub org/user for the repo URL, and the OneDrive account for the video.
 See `agent/BRIEF.md` → Open questions.
+
+---
+
+## 2026-09-04 — Stitch MCP + UI rebuild
+
+**Stitch MCP server.** Added to Claude Code at **user** scope, so it is available
+in every project, not just this worktree. Two gotchas worth remembering:
+
+- `claude mcp add`'s `--header` flag is variadic (`-H, --header <header...>`), so
+  it swallows a URL placed after it. The URL must come **before** `--header`, or
+  the command fails with `missing required argument 'commandOrUrl'`.
+- MCP tools bind at session start. A server added mid-session has no `mcp__*`
+  tools until Claude Code restarts. The server can still be driven directly over
+  HTTP JSON-RPC (`initialize`, then `tools/list` / `tools/call`) in the meantime.
+
+**Stitch's shape.** Its tools operate on Stitch's own projects only — it cannot
+write to this repo. `list_screens` returns each screen's `htmlCode.downloadUrl`
+and `screenshot.downloadUrl`; the HTML is a full Tailwind-CDN page with the theme
+in an inline `tailwind.config`, which is where the colour tokens were read from.
+
+**Vite worktree gotcha.** A fresh git worktree has no `node_modules`, so
+`npm run build` fails with `sh: vite: command not found` until `npm install` is
+run inside `client/`.
+
+**Browser-pane gotcha.** Screenshots come back as a blank page while the pane is
+hidden (`document.visibilityState === "hidden"`). Fronting the tab is not always
+enough — screenshots taken immediately after a `navigate` work reliably, while
+scroll-then-screenshot does not. To capture a long page, set a tall viewport with
+`resize_window` and screenshot once after navigating.
+
+**Not recorded here:** the Stitch API key. It lives in `~/.claude.json` outside
+this repo and must never be committed or pasted into project files.
