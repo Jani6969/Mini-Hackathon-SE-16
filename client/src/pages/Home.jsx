@@ -24,7 +24,15 @@ export default function Home({ prices = [] }) {
   return (
     <main className="page">
       <section className="hero">
-        <div>
+        <img
+          className="hero-media"
+          src="/images/negombo-hero-v2.jpg"
+          alt="Fresh fish displayed beside fishing boats at a Negombo landing site at dawn"
+          width="1672"
+          height="941"
+          fetchpriority="high"
+        />
+        <div className="hero-content">
           <p className="eyebrow">Negombo · Daily landing-site prices</p>
           <h1>
             Fair, transparent fish prices across <span className="accent">Negombo landing sites</span>
@@ -42,13 +50,7 @@ export default function Home({ prices = [] }) {
             </Link>
           </div>
         </div>
-        <figure className="hero-figure">
-          <img src="/hero.jpg" alt="Fresh fish on ice at a Negombo landing site" width="1600" height="900" />
-        </figure>
-      </section>
-
-      <section className="section">
-        <div className="stats">
+        <div className="hero-stats" aria-label="Current board summary">
           <div className="stat">
             <p className="stat-label">Reports on the board</p>
             <p className="stat-value">{prices.length}</p>
