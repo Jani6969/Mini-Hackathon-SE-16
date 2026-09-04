@@ -50,9 +50,10 @@ export default function AddPrice({ onAdd }) {
   };
 
   return (
-    <main className="page">
-      <h1>Report Today&apos;s Price</h1>
-      <form onSubmit={handleSubmit} noValidate>
+    <main className="page form-page">
+      <div className="page-intro"><p className="eyebrow dark"><span /> Community contribution</p><h1>Report today&apos;s price</h1><p>Share a fresh landing-site price. It takes less than a minute and helps the whole community compare.</p></div>
+      <form className="price-form" onSubmit={handleSubmit} noValidate>
+        <div className="form-section-label"><span>01</span> Catch details</div>
         <label htmlFor="fish">Fish type</label>
         <select id="fish" value={form.fish} onChange={event => handleChange('fish', event.target.value)}>
           <option value="">-- Select --</option>
@@ -65,6 +66,7 @@ export default function AddPrice({ onAdd }) {
           {MARKETS.map(market => <option key={market} value={market}>{market}</option>)}
         </select>
         {errors.market && <p className="error">{errors.market}</p>}
+        <div className="form-section-label form-section-space"><span>02</span> Price report</div>
         <label htmlFor="price">Price per kg (Rs.)</label>
         <input id="price" inputMode="decimal" value={form.price}
           onChange={event => handleChange('price', event.target.value)} placeholder="e.g. 950" />
@@ -74,7 +76,8 @@ export default function AddPrice({ onAdd }) {
           onChange={event => handleChange('seller', event.target.value)} placeholder="e.g. Nimal" />
         {errors.seller && <p className="error">{errors.seller}</p>}
         {apiError && <p className="error">{apiError}</p>}
-        <button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Submit Price'}</button>
+        <button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Publish price report'}</button>
+        <p className="form-footnote">Reports are public. Please enter only your preferred display name.</p>
       </form>
     </main>
   );

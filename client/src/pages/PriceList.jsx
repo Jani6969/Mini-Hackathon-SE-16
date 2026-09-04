@@ -11,35 +11,45 @@ export default function PriceList({ prices, loading }) {
   const average = filtered.length
     ? Math.round(filtered.reduce((total, price) => total + price.price, 0) / filtered.length)
     : 0;
+  const lowest = filtered.length ? Math.min(...filtered.map(price => price.price)) : 0;
+  const highest = filtered.length ? Math.max(...filtered.map(price => price.price)) : 0;
 
-  if (loading) return <main className="page"><p>Loading prices...</p></main>;
+  if (loading) return <main className="page loading-state"><span className="loader" /><p>Loading latest prices…</p></main>;
 
   return (
-    <main className="page">
-      <h1>Today&apos;s Prices</h1>
-      <div className="filters">
-        <label className="visually-hidden" htmlFor="search">Search fish type</label>
-        <input id="search" placeholder="Search fish type..." value={search}
-          onChange={event => setSearch(event.target.value)} />
-        <label className="visually-hidden" htmlFor="market-filter">Filter by landing site</label>
-        <select id="market-filter" value={market} onChange={event => setMarket(event.target.value)}>
-          {markets.map(option => <option key={option} value={option}>{option}</option>)}
-        </select>
-      </div>
-      <p className="summary">
-        Showing <b>{filtered.length}</b> {filtered.length === 1 ? 'entry' : 'entries'}
-        {' · '}Average price <b>Rs. {average}</b> /kg
-      </p>
-      {filtered.length === 0 && <p className="muted">No prices found for that search.</p>}
-      <div className="grid">
-        {filtered.map(price => (
-          <article className="card" key={price._id}>
-            <h2>{price.fish}</h2>
-            <p className="price">Rs. {price.price} /kg</p>
-            <p>{price.market} · {price.date}</p>
-            <p className="muted">Reported by {price.seller}</p>
-          </article>
-        ))}
+    <main className="page dashboard-page">
+      <div className="page-intro prices-intro"><div><p className="eyebrow dark"><span /> Live community board</p><h1>Today&apos;s prices</h1><p>Compare recent reports from selected landing sites around Negombo.</p></div><span className="live-badge"><i /> Live data</span></div>
+      <section className="dashboard-metrics" aria-label="Filtered price summary">
+        <article><span>Reports</span><strong>{filtered.length}</strong><small>matching entries</small></article>
+        <article className="metric-primary"><span>Average price</span><strong><small>Rs.</small> {average}</strong><small>per kilogram</small></article>
+        <article><span>Lowest report</span><strong><small>Rs.</small> {lowest}</strong><small>per kilogram</small></article>
+        <article><span>Highest report</span><strong><small>Rs.</small> {highest}</strong><small>per kilogram</small></article>
+      </section>
+      <div className="dashboard-layout">
+        <aside className="filter-panel" aria-label="Price filters">
+          <div className="filter-heading"><div><span>Refine board</span><strong>Filters</strong></div>{(search || market !== 'All') && <button className="reset-filter" type="button" onClick={() => { setSearch(''); setMarket('All'); }}>Reset</button>}</div>
+          <label htmlFor="search">Fish name</label>
+          <input id="search" placeholder="Search fish type..." value={search} onChange={event => setSearch(event.target.value)} />
+          <label htmlFor="market-filter">Landing site</label>
+          <select id="market-filter" value={market} onChange={event => setMarket(event.target.value)}>
+            {markets.map(option => <option key={option} value={option}>{option}</option>)}
+          </select>
+          <div className="filter-note"><span>i</span><p>Average and price range update instantly with your filters.</p></div>
+        </aside>
+        <section className="dashboard-results" aria-label="Price reports">
+          <div className="results-heading"><div><strong>Latest reports</strong><span>{filtered.length} {filtered.length === 1 ? 'result' : 'results'}</span></div><span className="sort-label">Newest first</span></div>
+          {filtered.length === 0 && <div className="empty-state"><strong>No matching prices</strong><p>Try another fish name or landing site.</p></div>}
+          <div className="grid">
+            {filtered.map(price => (
+              <article className="price-card" key={price._id}>
+                <div className="price-card-top"><span className="market-chip">{price.market}</span><time dateTime={price.date}>{price.date}</time></div>
+                <h2>{price.fish}</h2>
+                <p className="price"><small>Rs.</small> {price.price}<span>/kg</span></p>
+                <div className="reporter"><span>{price.seller.charAt(0).toUpperCase()}</span> Reported by {price.seller}</div>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );

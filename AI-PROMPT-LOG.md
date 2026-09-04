@@ -26,7 +26,7 @@ disclosure.
 | # | Member | Tool | Exact prompt | Purpose | How output was checked / modified |
 |---|---|---|---|---|---|
 | 1 | A | Codex | "Read all project files, add the provided `<REDACTED>` MongoDB URI to `.env`, build the project, seed data, push all code to the `main` branch of `Jani6969/Mini-Hackathon-SE-16`, then deploy a fully working project to Vercel and Railway." | Build, integrate and deploy the scoped MVP. | Followed the approved reference code; reviewed the diff; ran API, validation, build, secret-history and production persistence checks. |
-| 2 | | | | | |
+| 2 | D, B, C | Codex | "Make the UI look advanced, professional and elegant using the supplied screenshots and Stitch project. Generate higher-quality images if needed and add a dashboard." | Redesign public pages and add a market dashboard without expanding the approved feature scope. | Compared the supplied references and Stitch export, generated and compressed an original 1800×1013 hero image, reviewed responsive CSS and component diffs, completed a Vercel preview build, and visually checked the homepage and live-data dashboard. Kept sample/community-data disclosure visible and chose a public dashboard instead of an unsupported admin panel. |
 | 3 | | | | | |
 | 4 | | | | | |
 | 5 | | | | | |
